@@ -18,31 +18,41 @@ public class ImageManipulator {
 	
 	public ImageManipulator reset() {
 		pixels = mem.clone();
+		StatusLogger.finished("imanip reset");
 		return this;
 	}
 	
 	public ImageManipulator checkPoint() {
 		mem = pixels.clone();
+		StatusLogger.finished("imanip checkpoint creation");
 		return this;
 	}
 	
 	public ImageManipulator avBlur(){
+		StatusLogger.started("avBlur");
 		pixels = BlurAveraging.make(pixels);
+		StatusLogger.finished("avBlur");
 		return this; // Will allow usign one method after another - imanip.avBlur().negative().decay().decay().decay()
 	}
 	
 	public ImageManipulator avBlur(int kernelWidth, int kernelHeight){
+		StatusLogger.started("avBlur");
 		pixels = BlurAveraging.make(pixels, kernelWidth, kernelHeight);
+		StatusLogger.finished("avBlur");
 		return this; // Will allow usign one method after another - imanip.avBlur().negative().decay().decay().decay()
 	}
 	
 	public ImageManipulator negative() {
+		StatusLogger.started("negative");
 		pixels = Negative.make(pixels);
+		StatusLogger.finished("negative");
 		return this;
 	}
 	
 	public ImageManipulator decay() {
+		StatusLogger.started("decay");
 		pixels = Decay.make(pixels);
+		StatusLogger.finished("decay");
 		return this;
 	}
 	
@@ -57,6 +67,7 @@ public class ImageManipulator {
 		saveImageFromPixels(pixels, 
 				name, format, // Rename the output file and it's format as you want
 				img.getWidth(), img.getHeight(), img.getType());
+		StatusLogger.finished("save");
 		return this;
 	}
 	

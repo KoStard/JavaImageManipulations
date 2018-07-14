@@ -31,19 +31,23 @@ public class BlurAveraging {
 	}
 	
 	public static int[][][] make(int[][][] pixels) {
+		StatusLogger logger = new StatusLogger("avBlur", pixels.length, 0.1);
 		for (int y = 0; y < pixels.length; y++) {
 			for (int x = 0; x < pixels[0].length; x++) {
 				pixels[y][x] = blur(x, y, pixels);
 			}
+			logger.progress(1);
 		}
 		return pixels;
 	}
 	
 	public static int[][][] make(int[][][] pixels, int kernelWidth, int kernelHeight) {
+		StatusLogger logger = new StatusLogger("avBlur", pixels.length, 0.05);
 		for (int y = 0; y < pixels.length; y++) {
 			for (int x = 0; x < pixels[0].length; x++) {
-				pixels[y][x] = blur(x, y, pixels, kernelWidth, kernelHeight);
+				pixels[y][x] = blur(x, y, pixels, kernelWidth, kernelHeight); // This is possible to make much more efficient with dinamic programming (just remember previous pixel sums)
 			}
+			logger.progress(1);
 		}
 		return pixels;
 	}
