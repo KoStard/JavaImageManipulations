@@ -21,6 +21,7 @@ public class StatusLogger {
 	long size, current;
 	long step, last;
 	double stepPercentage, lastPercentage;
+	// Maybe this can work with time steps too.
 	public StatusLogger(String name, long size) {
 		this.name = name;
 		this.size = size;
