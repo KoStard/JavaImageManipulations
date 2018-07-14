@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 public class ImageManipulator {
 	
 	public static int[][][] getPixels(BufferedImage img) {
+		// Will return 2D array of pixel {A, R, G, B} or {R, G, B } type arrays from given bufferedImage
 		byte[] pixels = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
 		
 		int width = img.getWidth();
@@ -39,6 +40,7 @@ public class ImageManipulator {
 	}
 	
 	public static BufferedImage saveImageFromPixels(int[][][] pixels, String name, String format, int width, int height, int type) {
+		// Creates image from given {A, R, G, B} or {R, G, B } pixels array, saves and returns it  
 		BufferedImage temp = new BufferedImage(width, height, type);
 		if (type == BufferedImage.TYPE_INT_ARGB) {
 			for (int y = 0; y<height; y++) {
@@ -59,7 +61,7 @@ public class ImageManipulator {
 		return temp;
 	}
 	
-	public static int[] IntToARGB(int argb) {
+	public static int[] IntToARGB(int argb) { // Converts int to array {A, R, G, B}
 		return new int[] {
 				((argb>>24)&0xff),
 				((argb)&0xff),
@@ -68,7 +70,7 @@ public class ImageManipulator {
 		};
 	}
 	
-	public static int ARGBtoInt(int[] ARGB) {
+	public static int ARGBtoInt(int[] ARGB) { // Converts array of {A, R, G, B} to the pixel int view.
 		int argb = 0;
 		argb += (((int)ARGB[0]&0xff)<<24);
 		argb += (((int)ARGB[1]&0xff));
@@ -77,14 +79,15 @@ public class ImageManipulator {
 		return argb;
 	}
 	
-	public static int RGBtoInt(int[] RGB) {
+	public static int RGBtoInt(int[] RGB) { // Converts array of {R, G, B} to the pixel int view.
 		return ARGBtoInt(new int[] {255, RGB[0], RGB[1], RGB[2]});
 	}
 	
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
-			 img = ImageIO.read(new File("res/input.jpg"));
+			 img = ImageIO.read(new File("res/input.jpg")); // Rename the input file as you want
+			 // Your images have to be in the res folder, so if you don't have it, just create one.
 		} catch (IOException e) {
 			System.out.println("Can't import image");
 			System.exit(0);
@@ -93,11 +96,10 @@ public class ImageManipulator {
 		
 		
 		//Select what function you want to run
-		
 		pixels = Decay.make(pixels);
 		
-		//
-		
-		saveImageFromPixels(pixels, "output.jpg", "jpg", img.getWidth(), img.getHeight(), img.getType());
+		saveImageFromPixels(pixels, 
+				"output.jpg", "jpg", // Rename the output file and it's format as you want
+				img.getWidth(), img.getHeight(), img.getType());
 	}
 }
