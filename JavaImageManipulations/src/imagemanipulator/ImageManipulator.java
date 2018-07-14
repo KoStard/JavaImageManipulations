@@ -7,6 +7,58 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ImageManipulator {
+	public final BufferedImage img;
+	public int[][][] pixels;
+	public int[][][] mem;
+	public ImageManipulator(BufferedImage img) {
+		this.img = img;
+		pixels = getPixels(img);
+		mem = pixels.clone();
+	}
+	
+	public ImageManipulator reset() {
+		pixels = mem.clone();
+		return this;
+	}
+	
+	public ImageManipulator checkPoint() {
+		mem = pixels.clone();
+		return this;
+	}
+	
+	public ImageManipulator avBlur(){
+		pixels = BlurAveraging.make(pixels);
+		return this; // Will allow usign one method after another - imanip.avBlur().negative().decay().decay().decay()
+	}
+	
+	public ImageManipulator avBlur(int kernelWidth, int kernelHeight){
+		pixels = BlurAveraging.make(pixels, kernelWidth, kernelHeight);
+		return this; // Will allow usign one method after another - imanip.avBlur().negative().decay().decay().decay()
+	}
+	
+	public ImageManipulator negative() {
+		pixels = Negative.make(pixels);
+		return this;
+	}
+	
+	public ImageManipulator decay() {
+		pixels = Decay.make(pixels);
+		return this;
+	}
+	
+	public ImageManipulator save(String name) {
+		String format = "png";
+		if (name.indexOf(".")>0) {
+			String[] temp = name.split("\\.");
+			format = temp[temp.length-1];
+		} else {
+			name += "." + format;
+		}
+		saveImageFromPixels(pixels, 
+				name, format, // Rename the output file and it's format as you want
+				img.getWidth(), img.getHeight(), img.getType());
+		return this;
+	}
 	
 	public static int[][][] getPixels(BufferedImage img) {
 		// Will return 2D array of pixel {A, R, G, B} or {R, G, B } type arrays from given bufferedImage
@@ -92,14 +144,8 @@ public class ImageManipulator {
 			System.out.println("Can't import image");
 			System.exit(0);
 		}
-		int[][][] pixels = getPixels(img);
+		ImageManipulator imanip = new ImageManipulator(img);
 		
-		
-		//Select what function you want to run
-		pixels = Decay.make(pixels);
-		
-		saveImageFromPixels(pixels, 
-				"output.jpg", "jpg", // Rename the output file and it's format as you want
-				img.getWidth(), img.getHeight(), img.getType());
+		imanip.avBlur(50,50).save("output.png");
 	}
 }
