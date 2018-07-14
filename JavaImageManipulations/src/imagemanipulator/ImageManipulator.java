@@ -56,6 +56,13 @@ public class ImageManipulator {
 		return this;
 	}
 	
+	public ImageManipulator normalize() {
+		StatusLogger.started("normalize");
+		pixels = Normalize.make(pixels);
+		StatusLogger.finished("normalize");
+		return this;
+	}
+	
 	public ImageManipulator save(String name) {
 		String format = "png";
 		if (name.indexOf(".")>0) {
@@ -86,6 +93,7 @@ public class ImageManipulator {
 				col++;
 				if (col == img.getWidth()) {
 					row++;
+					col = 0;
 				}
 			}
 		} else {
@@ -105,7 +113,7 @@ public class ImageManipulator {
 	public static BufferedImage saveImageFromPixels(int[][][] pixels, String name, String format, int width, int height, int type) {
 		// Creates image from given {A, R, G, B} or {R, G, B } pixels array, saves and returns it  
 		BufferedImage temp = new BufferedImage(width, height, type);
-		if (type == BufferedImage.TYPE_INT_ARGB) {
+		if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_4BYTE_ABGR) {
 			for (int y = 0; y<height; y++) {
 				for (int x = 0; x<width;x++) {
 					temp.setRGB(x, y, ARGBtoInt(pixels[y][x]));
@@ -157,6 +165,6 @@ public class ImageManipulator {
 		}
 		ImageManipulator imanip = new ImageManipulator(img);
 		
-		imanip.avBlur(50,50).save("output.png");
+		imanip.normalize().save("output.png");
 	}
 }
