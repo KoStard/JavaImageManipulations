@@ -86,6 +86,13 @@ public class ImageManipulator {
 		return noise(false);
 	}
 	
+	public ImageManipulator treshold (Treshold.Color color, int treshold) {
+		StatusLogger.started(color.name + " treshold");
+		pixels = Treshold.make(pixels, treshold, color);
+		StatusLogger.finished(color.name + " treshold");
+		return this;
+	}
+	
 	// New functions come here
 	
 	public ImageManipulator save(String name) {
@@ -142,6 +149,7 @@ public class ImageManipulator {
 	public static BufferedImage convertPixelsToImage(int[][][] pixels, int type) {
 		BufferedImage temp = new BufferedImage(pixels[0].length, pixels.length, type);
 		if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_4BYTE_ABGR) {
+			Universals.printArray(pixels[0][0]);
 			for (int y = 0; y<pixels.length; y++) {
 				for (int x = 0; x<pixels[0].length;x++) {
 					temp.setRGB(x, y, ARGBtoInt(pixels[y][x]));
@@ -210,14 +218,13 @@ public class ImageManipulator {
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
-			 img = ImageIO.read(new File("res/input.jpg")); // Rename the input file as you want
+			 img = ImageIO.read(new File("res/tresholdTest.png")); // Rename the input file as you want
 			 // Your images have to be in the res folder, so if you don't have it, just create one.
 		} catch (IOException e) {
 			System.out.println("Can't import image");
 			System.exit(0);
 		}
 		ImageManipulator imanip = new ImageManipulator(img);
-		
-		imanip.noise(true, 0, 100).save("output.png");
+		imanip.avBlur().save("tempOutput.png");
 	}
 }

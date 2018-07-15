@@ -5,7 +5,7 @@ public class BlurAveraging {
 		if (kernelWidth%2 == 0) kernelWidth++;
 		if (kernelHeight%2 == 0) kernelHeight++;
 		int num = 0;
-		int[] sum = new int[3];
+		int[] sum = new int[pixels[0][0].length];
 		for (int yi = y-(kernelHeight-1)/2; yi <= y+(kernelHeight-1)/2; yi++) {
 			if (yi < 0 || yi >= pixels.length) continue;
 			for (int xi = x-(kernelWidth-1)/2; xi <= x+(kernelWidth-1)/2; xi++) {
