@@ -14,10 +14,10 @@ public class Treshold {
 			res = new int[3];
 			int d = 0;
 			for (int i = 0; i < pixel.length; i++) {
-				if (i == color.index) {
-					d += Universals.standardizeByte(pixel[i]);
-				} else {
+				if (i != color.index) {
 					d -= Universals.standardizeByte(pixel[i]);
+				} else {
+					d += Universals.standardizeByte(pixel[i]);
 				}
 			}
 			if (d > treshold) {
@@ -34,7 +34,6 @@ public class Treshold {
 					d += Universals.standardizeByte(pixel[i]);
 				}
 			}
-//			Universals.printArray(pixel, new int[] {d});
 			if (d > treshold) {
 				res[color.index+1] = -1;
 			}

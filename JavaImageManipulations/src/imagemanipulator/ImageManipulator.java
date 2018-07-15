@@ -148,7 +148,8 @@ public class ImageManipulator {
 	
 	public static BufferedImage convertPixelsToImage(int[][][] pixels, int type) {
 		BufferedImage temp = new BufferedImage(pixels[0].length, pixels.length, type);
-		if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_4BYTE_ABGR) {
+//		if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_4BYTE_ABGR) {
+		if (pixels[0][0].length == 4) {
 			Universals.printArray(pixels[0][0]);
 			for (int y = 0; y<pixels.length; y++) {
 				for (int x = 0; x<pixels[0].length;x++) {
@@ -225,6 +226,6 @@ public class ImageManipulator {
 			System.exit(0);
 		}
 		ImageManipulator imanip = new ImageManipulator(img);
-		imanip.avBlur().save("tempOutput.png");
+		imanip.treshold(Treshold.Color.GREEN, -10).save("tempOutput.png");
 	}
 }
