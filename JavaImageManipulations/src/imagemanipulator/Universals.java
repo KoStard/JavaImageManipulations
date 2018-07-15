@@ -14,6 +14,8 @@ public class Universals {
 		System.out.println();
 	}
 	public static int standardizeByte(int b) { // Solving the problem with byte sign -
+//		if (b > 255) b = b%255; another interesting method of standardization
+		if (b > 255) b = 255;
 		if (b < 0) b += 256;
 		else if (b > 127) b-=256;
 		return b;

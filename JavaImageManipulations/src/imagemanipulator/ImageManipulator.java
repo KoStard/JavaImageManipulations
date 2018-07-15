@@ -10,8 +10,10 @@ public class ImageManipulator {
 	public final BufferedImage img;
 	public int[][][] pixels;
 	public int[][][] mem;
+	public int type;
 	public ImageManipulator(BufferedImage img) {
 		this.img = img;
+		this.type = img.getType();
 		pixels = getPixels(img);
 		mem = pixels.clone();
 	}
@@ -63,6 +65,29 @@ public class ImageManipulator {
 		return this;
 	}
 	
+	public ImageManipulator erase() {
+		pixels = new int[pixels.length][pixels[0].length][pixels[0][0].length];
+		StatusLogger.finished("erase");
+		return this;
+	}
+	
+	public ImageManipulator noise(boolean colored, int rangeFrom, int rangeTo) { // 0-255
+		StatusLogger.started((colored?"colored ":"")+"noise");
+		pixels = Noise.createNoise(pixels, colored, rangeFrom, rangeTo);
+		StatusLogger.finished((colored?"colored ":"")+"noise");
+		return this;
+	}
+	
+	public ImageManipulator noise(boolean colored) {
+		return noise (colored, 0, 255);
+	}
+	
+	public ImageManipulator noise() {
+		return noise(false);
+	}
+	
+	// New functions come here
+	
 	public ImageManipulator save(String name) {
 		String format = "png";
 		if (name.indexOf(".")>0) {
@@ -110,25 +135,38 @@ public class ImageManipulator {
 		return finalPixels;
 	}
 	
-	public static BufferedImage saveImageFromPixels(int[][][] pixels, String name, String format, int width, int height, int type) {
-		// Creates image from given {A, R, G, B} or {R, G, B } pixels array, saves and returns it  
-		BufferedImage temp = new BufferedImage(width, height, type);
+	public static BufferedImage convertIManipToImage(ImageManipulator imanip) {
+		return convertPixelsToImage(imanip.pixels, imanip.type);
+	}
+	
+	public static BufferedImage convertPixelsToImage(int[][][] pixels, int type) {
+		BufferedImage temp = new BufferedImage(pixels[0].length, pixels.length, type);
 		if (type == BufferedImage.TYPE_INT_ARGB || type == BufferedImage.TYPE_4BYTE_ABGR) {
-			for (int y = 0; y<height; y++) {
-				for (int x = 0; x<width;x++) {
+			for (int y = 0; y<pixels.length; y++) {
+				for (int x = 0; x<pixels[0].length;x++) {
 					temp.setRGB(x, y, ARGBtoInt(pixels[y][x]));
 				}
 			}
-		} else for (int y = 0; y<height; y++) {
-				for (int x = 0; x<width;x++) {
+		} else for (int y = 0; y<pixels.length; y++) {
+				for (int x = 0; x<pixels[0].length;x++) {
 					temp.setRGB(x, y, RGBtoInt(pixels[y][x]));
 				}
 			}
+		return temp;
+	}
+	
+	public static void saveImage(BufferedImage img, String name, String format) {
 		try {
-			ImageIO.write(temp, format, new File("res/"+name));
+			ImageIO.write(img, format, new File("res/"+name));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static BufferedImage saveImageFromPixels(int[][][] pixels, String name, String format, int width, int height, int type) {
+		// Creates image from given {A, R, G, B} or {R, G, B } pixels array, saves and returns it  
+		BufferedImage temp = convertPixelsToImage(pixels, type);
+		saveImage(temp, name, format);
 		return temp;
 	}
 	
@@ -154,6 +192,21 @@ public class ImageManipulator {
 		return ARGBtoInt(new int[] {255, RGB[0], RGB[1], RGB[2]});
 	}
 	
+	public static BufferedImage getNewBlank(int width, int height) {
+		BufferedImage temp = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+		return temp;
+	}
+	
+	public static BufferedImage getNoise(int width, int height, boolean colored) {
+		return convertIManipToImage(getNewIManipWithNoise(width, height, colored));
+	}
+	
+	public static ImageManipulator getNewIManipWithNoise(int width, int height, boolean colored) {
+		BufferedImage img = getNewBlank(width, height);
+		ImageManipulator imanip = new ImageManipulator(img).noise(colored);
+		return imanip;
+	}
+	
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
@@ -165,6 +218,6 @@ public class ImageManipulator {
 		}
 		ImageManipulator imanip = new ImageManipulator(img);
 		
-		imanip.normalize().save("output.png");
+		imanip.noise(true, 0, 100).save("output.png");
 	}
 }
